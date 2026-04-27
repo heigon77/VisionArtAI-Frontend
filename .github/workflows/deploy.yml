@@ -40,8 +40,7 @@ jobs:
             --base-href "/VisionArtAI-Frontend/"      # ← nome do seu repo
 
       - name: SPA fallback
-        run: cp dist/VisionArtAI-Frontend/browser/index.html \
-                dist/VisionArtAI-Frontend/browser/404.html
+        run: cp dist/VisionArtAI-Frontend/browser/index.html dist/VisionArtAI-Frontend/browser/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
