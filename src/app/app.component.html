@@ -1,0 +1,127 @@
+<div class="shell">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header>
+    <div class="ornament">✦</div>
+    <h1>Vision Art AI<br><span>Object Detection</span></h1>
+    <div class="ornament">✦</div>
+  </header>
+
+  <!-- ── Idle: drop zone ────────────────────────────────────── -->
+  <section class="dropzone-wrap" *ngIf="state === 'idle'">
+    <div
+      class="dropzone"
+      [class.dragging]="dragging"
+      #dropzone
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+    >
+      <div class="drop-inner">
+        <div class="drop-icon">🖼</div>
+        <p class="drop-title">Arraste uma pintura</p>
+        <p class="drop-sub">ou clique para selecionar</p>
+        <p class="drop-formats">JPG · PNG · WEBP</p>
+      </div>
+      <input #fileInput type="file" accept="image/*" hidden (change)="onFileInput($event)" />
+    </div>
+  </section>
+
+  <!-- ── Loading ────────────────────────────────────────────── -->
+  <section class="loading-wrap" *ngIf="state === 'loading'">
+    <div class="preview-loading">
+      <img [src]="previewUrl" class="preview-blur" />
+      <div class="spinner-overlay">
+        <div class="spinner"></div>
+        <p>Analisando obra…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Error ──────────────────────────────────────────────── -->
+  <section class="error-wrap" *ngIf="state === 'error'">
+    <div class="error-box">
+      <span class="error-icon">⚠</span>
+      <p>{{ errorMsg }}</p>
+      <button class="btn-secondary" (click)="reset()">Tentar novamente</button>
+    </div>
+  </section>
+
+  <!-- ── Results ────────────────────────────────────────────── -->
+  <section class="results" *ngIf="state === 'done'">
+
+    <!-- Image panel -->
+    <div class="image-panel">
+      <div class="image-toggle">
+        <button [class.active]="showAnnotated" (click)="showAnnotated = true">
+          Com detecções
+        </button>
+        <button [class.active]="!showAnnotated" (click)="showAnnotated = false">
+          Original
+        </button>
+      </div>
+
+      <div class="image-frame">
+        <img [src]="showAnnotated ? annotatedUrl : previewUrl" />
+      </div>
+
+      <button class="btn-secondary reset-btn" (click)="reset()">
+        ← Nova imagem
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Summary chips -->
+      <div class="summary">
+        <div class="summary-stat">
+          <span class="stat-num">{{ detections.length }}</span>
+          <span class="stat-lbl">detecções</span>
+        </div>
+        <div class="divider-v"></div>
+        <div class="summary-stat">
+          <span class="stat-num">{{ uniqueClasses().length }}</span>
+          <span class="stat-lbl">classes</span>
+        </div>
+      </div>
+
+      <!-- Class summary -->
+      <div class="section-label">Classes encontradas</div>
+      <div class="class-chips">
+        <div class="chip" *ngFor="let c of uniqueClasses()">
+          <span class="chip-dot" [style.background]="c.color"></span>
+          <span class="chip-name">{{ c.name }}</span>
+          <span class="chip-count">{{ c.count }}</span>
+        </div>
+      </div>
+
+      <!-- Detection list -->
+      <div class="section-label" style="margin-top: 1.5rem">
+        Todas as detecções
+      </div>
+      <div class="detection-list">
+        <div class="det-item" *ngFor="let d of detections">
+          <div class="det-header">
+            <span class="det-dot" [style.background]="colorFor(d.class_id)"></span>
+            <span class="det-name">{{ d.class_name }}</span>
+            <span class="det-conf">{{ confidenceBar(d.confidence) }}</span>
+          </div>
+          <div class="conf-bar-bg">
+            <div class="conf-bar-fill"
+                 [style.width]="confidenceBar(d.confidence)"
+                 [style.background]="colorFor(d.class_id)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </section>
+
+  <footer>
+    <span>YOLOv8 · DEArt + COCO · 134 classes</span>
+  </footer>
+
+</div>
