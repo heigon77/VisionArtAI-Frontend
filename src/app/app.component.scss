@@ -477,34 +477,17 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
-}
-
-.poem-header {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  width: 100%;
-}
-
-.poem-rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--border));
-
-  &:last-child {
-    background: linear-gradient(to left, transparent, var(--border));
-  }
+  gap: 1.75rem;
 }
 
 .poem-title {
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 0.85rem;
-  letter-spacing: 0.22em;
-  color: var(--gold-dim);
-  white-space: nowrap;
-  text-transform: uppercase;
+  font-size: 1.35rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  text-align: center;
 }
 
 .poem-columns {

@@ -131,11 +131,7 @@
 
     <!-- ── Poem: full-width below ──────────────────────────── -->
     <section class="poem-section" *ngIf="poem">
-      <div class="poem-header">
-        <div class="poem-rule"></div>
-        <span class="poem-title">✦ &nbsp; Shakespearean Sonnet &nbsp; ✦</span>
-        <div class="poem-rule"></div>
-      </div>
+      <h2 class="poem-title">Poem Inspired by the Painting</h2>
 
       <div class="poem-columns">
         <ng-container *ngFor="let line of poemLines; let i = index">
