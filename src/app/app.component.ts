@@ -49,16 +49,18 @@ export class AppComponent {
   processFile(file: File) {
     if (!file.type.startsWith('image/')) return;
 
-    this.state = 'loading';
     this.detections = [];
     this.annotatedUrl = null;
     this.styleResult = null;
     this.poem = '';
     this.poemLines = [];
-    this.cdr.detectChanges();
 
     const reader = new FileReader();
-    reader.onload = ev => { this.previewUrl = ev.target?.result as string; this.cdr.detectChanges(); };
+    reader.onload = ev => {
+      this.previewUrl = ev.target?.result as string;
+      this.state = 'loading';
+      this.cdr.detectChanges();
+    };
     reader.readAsDataURL(file);
 
     this.svc.detect(file).subscribe({

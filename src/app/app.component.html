@@ -30,7 +30,10 @@
 
   <!-- ── Loading ──────────────────────────────────────────── -->
   <div class="loading-overlay" *ngIf="state === 'loading'">
-    <div class="spinner"></div>
+    <img *ngIf="previewUrl" [src]="previewUrl" class="loading-preview" />
+    <div class="loading-spinner-wrap">
+      <div class="spinner"></div>
+    </div>
   </div>
 
   <!-- ── Error ────────────────────────────────────────────── -->
