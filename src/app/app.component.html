@@ -7,7 +7,7 @@
     <div class="ornament">✦</div>
   </header>
 
-  <!-- ── Idle: drop zone ──────────────────────────────────── -->
+  <!-- ── Idle ─────────────────────────────────────────────── -->
   <section class="dropzone-wrap" *ngIf="state === 'idle'">
     <div
       class="dropzone"
@@ -30,12 +30,18 @@
 
   <!-- ── Loading ──────────────────────────────────────────── -->
   <section class="loading-wrap" *ngIf="state === 'loading'">
-    <div class="preview-loading">
-      <img [src]="previewUrl" class="preview-blur" />
-      <div class="spinner-overlay">
-        <div class="spinner"></div>
-        <p>Analysing artwork…</p>
+    <div class="loading-backdrop" *ngIf="previewUrl">
+      <img [src]="previewUrl" class="backdrop-img" />
+      <div class="backdrop-vignette"></div>
+    </div>
+    <div class="loading-card">
+      <div class="hourglass">
+        <div class="hg-ring"></div>
+        <div class="hg-ring hg-ring--2"></div>
+        <div class="hg-ring hg-ring--3"></div>
       </div>
+      <p class="loading-label">Analysing artwork…</p>
+      <p class="loading-sub">This may take a moment</p>
     </div>
   </section>
 
@@ -49,70 +55,51 @@
   </section>
 
   <!-- ── Results ──────────────────────────────────────────── -->
-  <section class="results" *ngIf="state === 'done'">
+  <div class="results-shell" *ngIf="state === 'done'">
 
-    <!-- Left: image + style card -->
-    <div class="image-panel">
+    <!-- Top: image + sidebar -->
+    <section class="results">
 
-      <div class="image-toggle">
-        <button [class.active]="showAnnotated" (click)="showAnnotated = true">
-          With detections
-        </button>
-        <button [class.active]="!showAnnotated" (click)="showAnnotated = false">
-          Original
-        </button>
+      <!-- Image panel -->
+      <div class="image-panel">
+        <div class="image-toggle">
+          <button [class.active]="showAnnotated" (click)="showAnnotated = true">With detections</button>
+          <button [class.active]="!showAnnotated" (click)="showAnnotated = false">Original</button>
+        </div>
+        <div class="image-frame">
+          <img [src]="showAnnotated ? annotatedUrl : previewUrl" />
+        </div>
+        <button class="btn-secondary reset-btn" (click)="reset()">← New image</button>
       </div>
 
-      <div class="image-frame">
-        <img [src]="showAnnotated ? annotatedUrl : previewUrl" />
-      </div>
+      <!-- Sidebar: stats + style + detections -->
+      <aside class="sidebar">
 
-      <!-- Style classification card -->
-      <div class="style-card" *ngIf="styleResult">
-        <div class="style-label">Artistic Style</div>
-        <div class="style-name">{{ styleResult.style_name }}</div>
-        <div class="style-conf-row">
-          <div class="style-bar-bg">
-            <div class="style-bar-fill" [style.width]="styleConfidencePct()"></div>
+        <div class="summary">
+          <div class="summary-stat">
+            <span class="stat-num">{{ detections.length }}</span>
+            <span class="stat-lbl">detections</span>
           </div>
-          <span class="style-pct">{{ styleConfidencePct() }}</span>
+          <div class="divider-v"></div>
+          <div class="summary-stat">
+            <span class="stat-num">{{ uniqueClasses().length }}</span>
+            <span class="stat-lbl">classes</span>
+          </div>
         </div>
-      </div>
 
-      <button class="btn-secondary reset-btn" (click)="reset()">
-        ← New image
-      </button>
-    </div>
-
-    <!-- Right: tabbed sidebar -->
-    <aside class="sidebar">
-
-      <!-- Summary stats -->
-      <div class="summary">
-        <div class="summary-stat">
-          <span class="stat-num">{{ detections.length }}</span>
-          <span class="stat-lbl">detections</span>
+        <!-- Style -->
+        <div class="style-card" *ngIf="styleResult">
+          <div class="style-label">Artistic Style</div>
+          <div class="style-name">{{ styleResult.style_name }}</div>
+          <div class="style-conf-row">
+            <div class="style-bar-bg">
+              <div class="style-bar-fill" [style.width]="styleConfidencePct()"></div>
+            </div>
+            <span class="style-pct">{{ styleConfidencePct() }}</span>
+          </div>
         </div>
-        <div class="divider-v"></div>
-        <div class="summary-stat">
-          <span class="stat-num">{{ uniqueClasses().length }}</span>
-          <span class="stat-lbl">classes</span>
-        </div>
-      </div>
 
-      <!-- Tab switcher -->
-      <div class="tab-row">
-        <button class="tab-btn" [class.active]="activeTab === 'detections'" (click)="activeTab = 'detections'">
-          Detections
-        </button>
-        <button class="tab-btn" [class.active]="activeTab === 'poem'" (click)="activeTab = 'poem'">
-          ✦ Sonnet
-        </button>
-      </div>
-
-      <!-- ── Detections tab ─────────────────────────── -->
-      <div *ngIf="activeTab === 'detections'">
-
+        <!-- Classes found -->
         <div class="section-label">Classes found</div>
         <div class="class-chips">
           <div class="chip" *ngFor="let c of uniqueClasses()">
@@ -122,7 +109,8 @@
           </div>
         </div>
 
-        <div class="section-label" style="margin-top: 1.5rem">All detections</div>
+        <!-- All detections -->
+        <div class="section-label" style="margin-top:1.5rem">All detections</div>
         <div class="detection-list">
           <div class="det-item" *ngFor="let d of detections">
             <div class="det-header">
@@ -133,28 +121,31 @@
             <div class="conf-bar-bg">
               <div class="conf-bar-fill"
                    [style.width]="confidenceBar(d.confidence)"
-                   [style.background]="colorFor(d.class_id)">
-              </div>
+                   [style.background]="colorFor(d.class_id)"></div>
             </div>
           </div>
         </div>
 
+      </aside>
+    </section>
+
+    <!-- ── Poem: full-width below ──────────────────────────── -->
+    <section class="poem-section" *ngIf="poem">
+      <div class="poem-header">
+        <div class="poem-rule"></div>
+        <span class="poem-title">✦ &nbsp; Shakespearean Sonnet &nbsp; ✦</span>
+        <div class="poem-rule"></div>
       </div>
 
-      <!-- ── Poem tab ───────────────────────────────── -->
-      <div class="poem-panel" *ngIf="activeTab === 'poem'">
-        <div class="poem-deco">— Shakespearean Sonnet —</div>
-        <div class="poem-body">
-          <ng-container *ngFor="let line of poemLines">
-            <span class="poem-line" *ngIf="line !== ''">&nbsp;&nbsp;{{ line }}</span>
-            <span class="poem-spacer" *ngIf="line === ''"></span>
-          </ng-container>
-        </div>
-        <div class="poem-deco poem-deco--bottom">✦</div>
+      <div class="poem-columns">
+        <ng-container *ngFor="let line of poemLines; let i = index">
+          <span class="poem-line" *ngIf="line !== ''">{{ line }}</span>
+          <span class="poem-spacer" *ngIf="line === ''"></span>
+        </ng-container>
       </div>
+    </section>
 
-    </aside>
-  </section>
+  </div><!-- /results-shell -->
 
   <footer>
     <span>YOLOv8 · DEArt + COCO · 134 classes · Style Classifier · Qwen 2.5 1.5B</span>

@@ -18,7 +18,6 @@ const COLORS = [
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('dropzone') dropzone!: ElementRef<HTMLDivElement>;
 
   state: State = 'idle';
@@ -30,13 +29,9 @@ export class AppComponent {
   poem: string = '';
   poemLines: string[] = [];
   showAnnotated = true;
-  activeTab: 'detections' | 'poem' = 'detections';
   errorMsg = '';
 
-  constructor(
-    private svc: DetectionService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private svc: DetectionService, private cdr: ChangeDetectorRef) {}
 
   onDragOver(e: DragEvent) { e.preventDefault(); this.dragging = true; }
   onDragLeave()             { this.dragging = false; }
@@ -60,26 +55,19 @@ export class AppComponent {
     this.styleResult = null;
     this.poem = '';
     this.poemLines = [];
-    this.activeTab = 'detections';
     this.cdr.detectChanges();
 
     const reader = new FileReader();
-    reader.onload = ev => {
-      this.previewUrl = ev.target?.result as string;
-      this.cdr.detectChanges();
-    };
+    reader.onload = ev => { this.previewUrl = ev.target?.result as string; this.cdr.detectChanges(); };
     reader.readAsDataURL(file);
 
     this.svc.detect(file).subscribe({
       next: (res: DetectResponse) => {
-        console.log('Response:', res);
-        this.detections  = res.detections.sort((a, b) => b.confidence - a.confidence);
+        this.detections   = res.detections.sort((a, b) => b.confidence - a.confidence);
         this.annotatedUrl = `data:image/jpeg;base64,${res.annotated_image}`;
         this.styleResult  = res.style ?? null;
         this.poem         = res.poem ?? '';
-        this.poemLines    = this.poem
-          .split('\n')
-          .map(l => l.trim());
+        this.poemLines    = this.poem.split('\n').map(l => l.trim());
         this.state = 'done';
         this.cdr.detectChanges();
       },
@@ -104,9 +92,7 @@ export class AppComponent {
   }
 
   colorFor(id: number): string { return COLORS[id % COLORS.length]; }
-
   confidenceBar(conf: number): string { return `${Math.round(conf * 100)}%`; }
-
   styleConfidencePct(): string {
     return this.styleResult ? `${Math.round(this.styleResult.confidence * 100)}%` : '0%';
   }
