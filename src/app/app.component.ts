@@ -30,16 +30,6 @@ export class AppComponent {
   poemLines: string[] = [];
   showAnnotated = true;
   errorMsg = '';
-  loadingMessage = '';
-
-  private readonly loadingMessages = [
-    'Scanning the artwork…',
-    'Detecting objects…',
-    'Classifying artistic style…',
-    'Composing your poem…',
-    'Finalising analysis…',
-  ];
-  private loadingInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(private svc: DetectionService, private cdr: ChangeDetectorRef) {}
 
@@ -56,23 +46,6 @@ export class AppComponent {
     if (file) this.processFile(file);
   }
 
-  private startLoadingCycle() {
-    let i = 0;
-    this.loadingMessage = this.loadingMessages[0];
-    this.loadingInterval = setInterval(() => {
-      i = (i + 1) % this.loadingMessages.length;
-      this.loadingMessage = this.loadingMessages[i];
-      this.cdr.detectChanges();
-    }, 2400);
-  }
-
-  private stopLoadingCycle() {
-    if (this.loadingInterval) {
-      clearInterval(this.loadingInterval);
-      this.loadingInterval = null;
-    }
-  }
-
   processFile(file: File) {
     if (!file.type.startsWith('image/')) return;
 
@@ -82,7 +55,6 @@ export class AppComponent {
     this.styleResult = null;
     this.poem = '';
     this.poemLines = [];
-    this.startLoadingCycle();
     this.cdr.detectChanges();
 
     const reader = new FileReader();
@@ -91,7 +63,6 @@ export class AppComponent {
 
     this.svc.detect(file).subscribe({
       next: (res: DetectResponse) => {
-        this.stopLoadingCycle();
         this.detections   = res.detections.sort((a, b) => b.confidence - a.confidence);
         this.annotatedUrl = `data:image/jpeg;base64,${res.annotated_image}`;
         this.styleResult  = res.style ?? null;
@@ -101,7 +72,6 @@ export class AppComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.stopLoadingCycle();
         console.error('Error:', err);
         this.errorMsg = 'Could not connect to the backend. Make sure the server is running.';
         this.state = 'error';
@@ -111,7 +81,6 @@ export class AppComponent {
   }
 
   reset() {
-    this.stopLoadingCycle();
     this.state = 'idle';
     this.previewUrl = null;
     this.annotatedUrl = null;

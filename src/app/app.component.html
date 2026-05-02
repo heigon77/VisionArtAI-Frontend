@@ -30,37 +30,7 @@
 
   <!-- ── Loading ──────────────────────────────────────────── -->
   <div class="loading-overlay" *ngIf="state === 'loading'">
-
-    <!-- Blurred image backdrop -->
-    <div class="loading-backdrop" *ngIf="previewUrl">
-      <img [src]="previewUrl" class="backdrop-img" />
-      <div class="backdrop-vignette"></div>
-    </div>
-
-    <!-- Central card -->
-    <div class="loading-card">
-
-      <!-- Spinner -->
-      <div class="hourglass">
-        <div class="hg-ring"></div>
-        <div class="hg-ring hg-ring--2"></div>
-        <div class="hg-ring hg-ring--3"></div>
-      </div>
-
-      <!-- Cycling step message -->
-      <p class="loading-label">{{ loadingMessage }}</p>
-
-      <!-- Animated dots -->
-      <div class="loading-dots">
-        <span></span><span></span><span></span>
-      </div>
-
-      <!-- Thumbnail of uploaded image -->
-      <div class="loading-thumb-wrap" *ngIf="previewUrl">
-        <img [src]="previewUrl" class="loading-thumb" />
-      </div>
-
-    </div>
+    <div class="spinner"></div>
   </div>
 
   <!-- ── Error ────────────────────────────────────────────── -->
