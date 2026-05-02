@@ -1,13 +1,13 @@
 <div class="shell">
 
-  <!-- ── Header ─────────────────────────────────────────────── -->
+  <!-- ── Header ───────────────────────────────────────────── -->
   <header>
     <div class="ornament">✦</div>
-    <h1>Vision Art AI<br><span>Object Detection</span></h1>
+    <h1>Vision Art AI<br><span>Object Detection &amp; Style Analysis</span></h1>
     <div class="ornament">✦</div>
   </header>
 
-  <!-- ── Idle: drop zone ────────────────────────────────────── -->
+  <!-- ── Idle: drop zone ──────────────────────────────────── -->
   <section class="dropzone-wrap" *ngIf="state === 'idle'">
     <div
       class="dropzone"
@@ -20,42 +20,43 @@
     >
       <div class="drop-inner">
         <div class="drop-icon">🖼</div>
-        <p class="drop-title">Arraste uma pintura</p>
-        <p class="drop-sub">ou clique para selecionar</p>
+        <p class="drop-title">Drop a painting here</p>
+        <p class="drop-sub">or click to browse</p>
         <p class="drop-formats">JPG · PNG · WEBP</p>
       </div>
       <input #fileInput type="file" accept="image/*" hidden (change)="onFileInput($event)" />
     </div>
   </section>
 
-  <!-- ── Loading ────────────────────────────────────────────── -->
+  <!-- ── Loading ──────────────────────────────────────────── -->
   <section class="loading-wrap" *ngIf="state === 'loading'">
     <div class="preview-loading">
       <img [src]="previewUrl" class="preview-blur" />
       <div class="spinner-overlay">
         <div class="spinner"></div>
-        <p>Analisando obra…</p>
+        <p>Analysing artwork…</p>
       </div>
     </div>
   </section>
 
-  <!-- ── Error ──────────────────────────────────────────────── -->
+  <!-- ── Error ────────────────────────────────────────────── -->
   <section class="error-wrap" *ngIf="state === 'error'">
     <div class="error-box">
       <span class="error-icon">⚠</span>
       <p>{{ errorMsg }}</p>
-      <button class="btn-secondary" (click)="reset()">Tentar novamente</button>
+      <button class="btn-secondary" (click)="reset()">Try again</button>
     </div>
   </section>
 
-  <!-- ── Results ────────────────────────────────────────────── -->
+  <!-- ── Results ──────────────────────────────────────────── -->
   <section class="results" *ngIf="state === 'done'">
 
-    <!-- Image panel -->
+    <!-- Left: image + style card -->
     <div class="image-panel">
+
       <div class="image-toggle">
         <button [class.active]="showAnnotated" (click)="showAnnotated = true">
-          Com detecções
+          With detections
         </button>
         <button [class.active]="!showAnnotated" (click)="showAnnotated = false">
           Original
@@ -66,19 +67,31 @@
         <img [src]="showAnnotated ? annotatedUrl : previewUrl" />
       </div>
 
+      <!-- Style classification card -->
+      <div class="style-card" *ngIf="styleResult">
+        <div class="style-label">Artistic Style</div>
+        <div class="style-name">{{ styleResult.style_name }}</div>
+        <div class="style-conf-row">
+          <div class="style-bar-bg">
+            <div class="style-bar-fill" [style.width]="styleConfidencePct()"></div>
+          </div>
+          <span class="style-pct">{{ styleConfidencePct() }}</span>
+        </div>
+      </div>
+
       <button class="btn-secondary reset-btn" (click)="reset()">
-        ← Nova imagem
+        ← New image
       </button>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Right: tabbed sidebar -->
     <aside class="sidebar">
 
-      <!-- Summary chips -->
+      <!-- Summary stats -->
       <div class="summary">
         <div class="summary-stat">
           <span class="stat-num">{{ detections.length }}</span>
-          <span class="stat-lbl">detecções</span>
+          <span class="stat-lbl">detections</span>
         </div>
         <div class="divider-v"></div>
         <div class="summary-stat">
@@ -87,41 +100,64 @@
         </div>
       </div>
 
-      <!-- Class summary -->
-      <div class="section-label">Classes encontradas</div>
-      <div class="class-chips">
-        <div class="chip" *ngFor="let c of uniqueClasses()">
-          <span class="chip-dot" [style.background]="c.color"></span>
-          <span class="chip-name">{{ c.name }}</span>
-          <span class="chip-count">{{ c.count }}</span>
-        </div>
+      <!-- Tab switcher -->
+      <div class="tab-row">
+        <button class="tab-btn" [class.active]="activeTab === 'detections'" (click)="activeTab = 'detections'">
+          Detections
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'poem'" (click)="activeTab = 'poem'">
+          ✦ Sonnet
+        </button>
       </div>
 
-      <!-- Detection list -->
-      <div class="section-label" style="margin-top: 1.5rem">
-        Todas as detecções
-      </div>
-      <div class="detection-list">
-        <div class="det-item" *ngFor="let d of detections">
-          <div class="det-header">
-            <span class="det-dot" [style.background]="colorFor(d.class_id)"></span>
-            <span class="det-name">{{ d.class_name }}</span>
-            <span class="det-conf">{{ confidenceBar(d.confidence) }}</span>
+      <!-- ── Detections tab ─────────────────────────── -->
+      <div *ngIf="activeTab === 'detections'">
+
+        <div class="section-label">Classes found</div>
+        <div class="class-chips">
+          <div class="chip" *ngFor="let c of uniqueClasses()">
+            <span class="chip-dot" [style.background]="c.color"></span>
+            <span class="chip-name">{{ c.name }}</span>
+            <span class="chip-count">{{ c.count }}</span>
           </div>
-          <div class="conf-bar-bg">
-            <div class="conf-bar-fill"
-                 [style.width]="confidenceBar(d.confidence)"
-                 [style.background]="colorFor(d.class_id)">
+        </div>
+
+        <div class="section-label" style="margin-top: 1.5rem">All detections</div>
+        <div class="detection-list">
+          <div class="det-item" *ngFor="let d of detections">
+            <div class="det-header">
+              <span class="det-dot" [style.background]="colorFor(d.class_id)"></span>
+              <span class="det-name">{{ d.class_name }}</span>
+              <span class="det-conf">{{ confidenceBar(d.confidence) }}</span>
+            </div>
+            <div class="conf-bar-bg">
+              <div class="conf-bar-fill"
+                   [style.width]="confidenceBar(d.confidence)"
+                   [style.background]="colorFor(d.class_id)">
+              </div>
             </div>
           </div>
         </div>
+
+      </div>
+
+      <!-- ── Poem tab ───────────────────────────────── -->
+      <div class="poem-panel" *ngIf="activeTab === 'poem'">
+        <div class="poem-deco">— Shakespearean Sonnet —</div>
+        <div class="poem-body">
+          <ng-container *ngFor="let line of poemLines">
+            <span class="poem-line" *ngIf="line !== ''">&nbsp;&nbsp;{{ line }}</span>
+            <span class="poem-spacer" *ngIf="line === ''"></span>
+          </ng-container>
+        </div>
+        <div class="poem-deco poem-deco--bottom">✦</div>
       </div>
 
     </aside>
   </section>
 
   <footer>
-    <span>YOLOv8 · DEArt + COCO · 134 classes</span>
+    <span>YOLOv8 · DEArt + COCO · 134 classes · Style Classifier · Qwen 2.5 1.5B</span>
   </footer>
 
 </div>

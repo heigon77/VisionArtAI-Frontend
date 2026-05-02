@@ -12,12 +12,20 @@ export interface Detection {
   class_id:   number;
   class_name: string;
   confidence: number;
-  bbox:       BBox;
+  bbox?:      BBox;
+}
+
+export interface StyleResult {
+  style_id:   number;
+  style_name: string;
+  confidence: number;
 }
 
 export interface DetectResponse {
   detections:      Detection[];
-  annotated_image: string;        // base64 JPEG
+  style:           StyleResult;
+  poem:            string;
+  annotated_image: string;   // base64 JPEG
   image_width:     number;
   image_height:    number;
 }

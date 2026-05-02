@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { DetectionService, Detection, DetectResponse } from './detection.service';
+import { DetectionService, Detection, StyleResult, DetectResponse } from './detection.service';
 
 type State = 'idle' | 'loading' | 'done' | 'error';
 
@@ -26,7 +26,11 @@ export class AppComponent {
   previewUrl: string | null = null;
   annotatedUrl: string | null = null;
   detections: Detection[] = [];
+  styleResult: StyleResult | null = null;
+  poem: string = '';
+  poemLines: string[] = [];
   showAnnotated = true;
+  activeTab: 'detections' | 'poem' = 'detections';
   errorMsg = '';
 
   constructor(
@@ -53,6 +57,10 @@ export class AppComponent {
     this.state = 'loading';
     this.detections = [];
     this.annotatedUrl = null;
+    this.styleResult = null;
+    this.poem = '';
+    this.poemLines = [];
+    this.activeTab = 'detections';
     this.cdr.detectChanges();
 
     const reader = new FileReader();
@@ -64,16 +72,20 @@ export class AppComponent {
 
     this.svc.detect(file).subscribe({
       next: (res: DetectResponse) => {
-        console.log('Resposta:', res);
-        this.detections = res.detections
-          .sort((a, b) => b.confidence - a.confidence);
+        console.log('Response:', res);
+        this.detections  = res.detections.sort((a, b) => b.confidence - a.confidence);
         this.annotatedUrl = `data:image/jpeg;base64,${res.annotated_image}`;
+        this.styleResult  = res.style ?? null;
+        this.poem         = res.poem ?? '';
+        this.poemLines    = this.poem
+          .split('\n')
+          .map(l => l.trim());
         this.state = 'done';
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Erro:', err);
-        this.errorMsg = 'Erro ao conectar com o backend. Verifique se está rodando.';
+        console.error('Error:', err);
+        this.errorMsg = 'Could not connect to the backend. Make sure the server is running.';
         this.state = 'error';
         this.cdr.detectChanges();
       },
@@ -85,12 +97,19 @@ export class AppComponent {
     this.previewUrl = null;
     this.annotatedUrl = null;
     this.detections = [];
+    this.styleResult = null;
+    this.poem = '';
+    this.poemLines = [];
     this.cdr.detectChanges();
   }
 
   colorFor(id: number): string { return COLORS[id % COLORS.length]; }
 
   confidenceBar(conf: number): string { return `${Math.round(conf * 100)}%`; }
+
+  styleConfidencePct(): string {
+    return this.styleResult ? `${Math.round(this.styleResult.confidence * 100)}%` : '0%';
+  }
 
   uniqueClasses(): { name: string; count: number; color: string }[] {
     const map = new Map<string, { count: number; id: number }>();

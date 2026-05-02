@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Mono:wght@400;500&display=swap');
 
 /* ── Tokens ─────────────────────────────────────────────────── */
 :root {
@@ -88,7 +88,6 @@ header {
   position: relative;
   transition: border-color 0.2s, background 0.2s;
 
-  // Corner ornaments
   &::before, &::after {
     content: '';
     position: absolute;
@@ -133,10 +132,7 @@ header {
   color: var(--cream);
 }
 
-.drop-sub {
-  font-size: 0.75rem;
-  color: var(--muted);
-}
+.drop-sub    { font-size: 0.75rem; color: var(--muted); }
 
 .drop-formats {
   margin-top: 0.5rem;
@@ -229,7 +225,7 @@ header {
   }
 }
 
-/* Image panel */
+/* ── Image panel ─────────────────────────────────────────────── */
 .image-panel {
   display: flex;
   flex-direction: column;
@@ -256,7 +252,6 @@ header {
       background: var(--bg3);
       color: var(--gold);
     }
-
     &:not(.active):hover { color: var(--cream); }
   }
 }
@@ -265,19 +260,83 @@ header {
   border: 1px solid var(--border);
   overflow: hidden;
 
-  img {
-    width: 100%;
-    display: block;
+  img { width: 100%; display: block; }
+}
+
+/* ── Style card ──────────────────────────────────────────────── */
+.style-card {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  position: relative;
+  overflow: hidden;
+
+  // Subtle gold left accent
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
   }
 }
 
-/* Sidebar */
+.style-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.style-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.2;
+}
+
+.style-conf-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.style-bar-bg {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.style-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.style-pct {
+  font-size: 0.72rem;
+  color: var(--gold);
+  min-width: 34px;
+  text-align: right;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
 .sidebar {
   border: 1px solid var(--border);
   background: var(--bg2);
   padding: 1.25rem;
   position: sticky;
   top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .summary {
@@ -313,6 +372,33 @@ header {
   background: var(--border);
 }
 
+/* ── Tabs ────────────────────────────────────────────────────── */
+.tab-row {
+  display: flex;
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+
+  .tab-btn {
+    flex: 1;
+    padding: 0.45rem 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color 0.15s, background 0.15s;
+
+    &.active {
+      background: var(--bg3);
+      color: var(--gold);
+    }
+    &:not(.active):hover { color: var(--cream); }
+  }
+}
+
+/* ── Section labels ──────────────────────────────────────────── */
 .section-label {
   font-size: 0.62rem;
   letter-spacing: 0.2em;
@@ -321,12 +407,12 @@ header {
   margin-bottom: 0.75rem;
 }
 
-/* Class chips */
+/* ── Class chips ─────────────────────────────────────────────── */
 .class-chips {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  max-height: 180px;
+  max-height: 160px;
   overflow-y: auto;
 
   &::-webkit-scrollbar { width: 3px; }
@@ -352,12 +438,12 @@ header {
   }
 }
 
-/* Detection list */
+/* ── Detection list ──────────────────────────────────────────── */
 .detection-list {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  max-height: 300px;
+  max-height: 260px;
   overflow-y: auto;
 
   &::-webkit-scrollbar { width: 3px; }
@@ -393,6 +479,61 @@ header {
   border-radius: 1px;
   transition: width 0.4s ease;
   opacity: 0.8;
+}
+
+/* ── Poem panel ──────────────────────────────────────────────── */
+.poem-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.25rem 0;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.poem-deco {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-dim);
+  text-align: center;
+
+  &--bottom {
+    font-size: 1rem;
+    color: var(--gold-dim);
+    opacity: 0.5;
+    font-style: normal;
+    letter-spacing: 0;
+  }
+}
+
+.poem-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.25rem;
+  border-left: 1px solid var(--border);
+}
+
+.poem-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--cream);
+  display: block;
+  word-break: break-word;
+}
+
+.poem-spacer {
+  display: block;
+  height: 0.75rem;
 }
 
 /* ── Buttons ─────────────────────────────────────────────────── */
