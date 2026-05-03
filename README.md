@@ -34,12 +34,6 @@ It detects visual elements in paintings, identifies artistic styles, and generat
 ### Real-Time Usage
 ![Demo Video](./demo/demo_video.gif)
 
-### Screenshots
-
-| Object & Style Analysis | Poetic Interpretation |
-|------------------------|----------------------|
-| ![Screenshot 1](./path/to/print1.png) | ![Screenshot 2](./path/to/print2.png) |
-
 ---
 
 ## 🧠 AI Stack
