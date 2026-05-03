@@ -1,59 +1,162 @@
-# VisionArtAIFrontend
+# Vision Art AI — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+**Vision Art AI** is an interactive platform that blends **computer vision** and **generative AI** to analyze, interpret, and reimagine artworks.  
+It detects visual elements in paintings, identifies artistic styles, and generates poetic interpretations inspired by the composition.
 
-## Development server
+---
 
-To start a local development server, run:
+## ✨ Features
+
+- **Multi-Class Object Detection**  
+  Detects up to **134 distinct object categories** within artworks using a fine-tuned YOLOv8 model.
+
+- **Art Style Classification**  
+  Identifies artistic movements (e.g., *Impressionism, Baroque, Renaissance*) with confidence scoring.
+
+- **AI-Generated Poetry**  
+  Produces a unique poem based on detected elements and artistic style using **Qwen 2.5**.
+
+- **Dual Visualization Mode**  
+  Seamlessly switch between:
+  - Original image
+  - Annotated image with bounding boxes
+
+- **Immersive UI/UX**  
+  Editorial-inspired design featuring:
+  - Dark theme
+  - Elegant typography (*Cormorant Garamond*)
+  - Smooth loading and transitions
+
+---
+
+## 🎥 Demo
+
+### Real-Time Usage
+![Demo Video](./demo/demo_video.gif)
+
+### Screenshots
+
+| Object & Style Analysis | Poetic Interpretation |
+|------------------------|----------------------|
+| ![Screenshot 1](./path/to/print1.png) | ![Screenshot 2](./path/to/print2.png) |
+
+---
+
+## 🧠 AI Stack
+
+- **YOLOv8**  
+  Object detection trained on:
+  - COCO Dataset  
+  - DEArt Dataset (art-focused)
+
+- **Style Classifier**  
+  Custom-trained model for artistic movement recognition
+
+- **Qwen 2.5 (1.5B)**  
+  Large Language Model used for creative text generation
+
+---
+
+## 🛠️ Tech Stack
+
+- **Angular 19+** — SPA architecture
+- **TypeScript** — Strong typing and maintainability
+- **SCSS** — Modern styling with variables and responsive layouts
+- **RxJS** — Reactive state and loading management
+- **REST API Integration** — Backend communication for AI inference
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm
+- Angular CLI
+
+```bash
+npm install -g @angular/cli
+````
+
+---
+
+### Installation
+
+```bash
+npm install
+```
+
+---
+
+### Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open your browser at:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
+
+### Production Build
 
 ```bash
-ng generate --help
+ng build --configuration production
 ```
 
-## Building
+---
 
-To build the project run:
+## ⚙️ Application Flow
 
-```bash
-ng build
-```
+1. User uploads an image
+2. Image preview is rendered instantly
+3. Backend processes:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+   * Object detection
+   * Style classification
+   * Poem generation
+4. Frontend displays:
 
-## Running unit tests
+   * Annotated image
+   * Detected objects ranked by confidence
+   * Style prediction
+   * Generated poem
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+---
 
-```bash
-ng test
-```
+## 🎯 Design Principles
 
-## Running end-to-end tests
+* **Reactive UX** — Smooth loading with progressive feedback
+* **Clarity First** — Clean separation between data, UI, and logic
+* **Aesthetic Focus** — Designed to match artistic context
+* **Extensibility** — Easy to plug new models or features
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
-```
+## 📌 Notes
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+* This frontend relies on a backend API for AI inference.
+* Ensure the backend service is running and properly configured.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 📜 License
+
+MIT License
+
+---
+
+## 🌐 Vision Art AI Ecosystem
+
+This frontend is part of the broader **Vision Art AI** ecosystem, combining:
+
+* Computer Vision
+* Generative AI
+* Artistic Interpretation
+
+---
