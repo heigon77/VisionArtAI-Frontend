@@ -2,5 +2,5 @@
 // Formato da URL: https://<usuario>-<nome-do-space>.hf.space
 export const environment = {
   production: true,
-  apiUrl: 'https://heigon77-yolo-art-backend.hf.space',
+  apiUrl: 'https://heigon77-VisionArtAI-Backend.hf.space',
 };
