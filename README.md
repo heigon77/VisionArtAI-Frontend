@@ -144,7 +144,7 @@ ng build --configuration production
 
 ## 📜 License
 
-MIT License
+GNU GENERAL PUBLIC LICENSE
 
 ---
 
